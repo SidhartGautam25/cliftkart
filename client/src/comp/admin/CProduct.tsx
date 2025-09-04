@@ -569,11 +569,11 @@ import {
   removeSuccess,
 } from "../../context/admin/adminSlice";
 import { toast, ToastContainer } from "react-toastify";
-import { categories, CatItems } from "../../utils/categories";
+import { categories} from "../../utils/categories";
 import { tags as Tags } from "../../utils/tags";
 //import { Colors } from "chart.js";
 // A small X icon component for the remove button
-import { Colors } from "../../utils/colors";
+
 import { Size } from "../../utils/colors";
 import ColorSelector from "./cproduct/ColorSelector";
 const XCircleIcon = () => (
@@ -932,7 +932,7 @@ const CProductC: React.FC = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
               >
                 <option value="">Choose a Sub category</option>
-                {subcategories?.subcategories?.map((item) => (
+                {subcategories?.subcategories?.map((item:any) => (
                   <option value={item.str} key={item.id}>
                     {item.name}
                   </option>
