@@ -1,0 +1,24 @@
+To do
+
+1. payment
+2. otp
+3. related item
+4. refund policy
+5. term and condition
+6. admin dashboard
+7. view more button in category
+
+Bugs
+
+1. product created toast is appearing twice
+2. after logout , items are still visible in cart and can be added and subtracted
+3. calculation bug in product page and cart page
+4. Product image div cover problem
+5. Product wise product page -> color , size 
+
+Completed
+1. login 
+2. signup with phone number registration
+3. ssl certificate added
+4. hoem page responsive
+5. 

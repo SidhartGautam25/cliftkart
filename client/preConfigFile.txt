@@ -1,0 +1,178 @@
+
+"==============================================================================
+" => A Modern Neovim init.vim
+"==============================================================================
+"
+" Last Change: 2025 Aug 29
+"
+"==============================================================================
+" => Plugin Manager: vim-plug
+"==============================================================================
+call plug#begin('~/.local/share/nvim/plugged')
+
+" --- UI & Theme ---
+Plug 'morhetz/gruvbox'
+Plug 'nvim-lualine/lualine.nvim' " Modern status line
+Plug 'nvim-tree/nvim-tree.lua'  " Modern file explorer
+Plug 'nvim-tree/nvim-web-devicons' " Icons for nvim-tree
+Plug 'folke/which-key.nvim' " Keybinding helper
+
+" --- File Navigation & Toggling ---
+" The new gold standard fuzzy finder for Neovim
+Plug 'nvim-lua/plenary.nvim' " Dependency for Telescope
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+
+" --- Terminal ---
+:Plug 'akinsho/toggleterm.nvim', { 'tag': '*' }
+
+" --- Coding & Language Support ---
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'dense-analysis/ale'
+Plug 'tpope/vim-commentary'
+Plug 'jiangmiao/auto-pairs'
+Plug 'lewis6991/gitsigns.nvim' " Git integration
+
+call plug#end()
+
+"==============================================================================
+" => General Settings
+"==============================================================================
+set number                      " Show line numbers
+set relativenumber              " Show relative line numbers
+set tabstop=2                   " Spaces for a tab
+set shiftwidth=2                " Spaces for auto-indent
+set expandtab                   " Use spaces instead of tabs
+set smartindent                 " Smart auto-indenting
+set clipboard=unnamedplus       " Use system clipboard
+set mouse=a                     " Enable mouse support
+set scrolloff=8                 " Keep 8 lines of context around cursor
+" --- Automatically create parent directories when saving a new file ---
+autocmd BufWritePre * silent! !mkdir -p %:h
+" --- Search Settings ---
+set hlsearch                    " Highlight all matches on search
+set incsearch                   " Show search results as you type
+set ignorecase                  " Ignore case in search patterns
+set smartcase                   " Override 'ignorecase' if search pattern has a capital letter
+" Tell Neovim to search in the current directory and all subdirectories
+set path+=./**
+" Prevent searching in slow, irrelevant directories like node_modules
+set wildignore+=**/node_modules/**,**/dist/**,**/build/**
+
+"==============================================================================
+" => Key Mappings
+"==============================================================================
+let mapleader = " " " Set the leader key to the space bar
+
+" --- Plugin Mappings ---
+" nvim-tree: Toggle file explorer
+nnoremap <leader>n :NvimTreeToggle<CR>
+" Telescope: Fuzzy find files, buffers, and more
+"Toggleterm: Toggle floating terminal
+" --- ToggleTerm Mappings ---
+" Toggle the main floating terminal
+nnoremap <silent> <F12> <cmd>ToggleTerm<cr>
+tnoremap <silent> <F12> <C-\><C-n><cmd>ToggleTerm<cr>
+
+" Cycle through open terminals
+" --- CORRECTED ToggleTerm MAPPINGS ---
+" Cycle through open terminals by calling the plugin's Lua functions
+nnoremap <leader>tl <cmd>Telescope toggleterm<cr>
+nnoremap <leader><leader> <cmd>ToggleTermNext<cr>
+nnoremap <leader>tp <cmd>ToggleTermPrev<cr>
+" Create a new, separate terminal instance
+
+"" --- CORRECTED COMMAND for new terminal---
+command Tnew lua require('toggleterm.terminal').Terminal:new():open() --- CORRECTED MAPPINGS (no space) ---
+
+nnoremap <leader>f <cmd>Telescope find_files default_text=<cr>
+nnoremap <leader>b <cmd>Telescope buffers default_text=<cr>
+nnoremap <leader>g <cmd>Telescope live_grep default_text=<cr>
+
+nnoremap <silent> <F12> <cmd>ToggleTerm<cr>
+tnoremap <silent> <F12> <C-\><C-n><cmd>ToggleTerm<cr>
+
+" --- Fast Buffer Toggling (for a few files) ---
+" Use Tab to go to the next buffer (file)
+nnoremap <Tab> :bnext<CR>
+" Use Shift-Tab to go to the previous buffer (file)
+nnoremap <S-Tab> :bprevious<CR>
+" --- Select All and Copy to System Clipboard ---
+" Press Ctrl+a, then y to yank (copy) the entire file
+nnoremap <C-a>y ggVGy
+
+
+
+"==============================================================================
+" => Plugin Configurations
+"==============================================================================
+
+" --- Theme ---
+set termguicolors " Enable true colors
+set background=dark
+colorscheme gruvbox
+
+" --- ALE (Linting & Formatting) ---
+let g:ale_fix_on_save = 1
+let g:ale_fixers = {
+\   'javascript': ['prettier', 'eslint'],
+\   'css': ['prettier'],
+\}
+
+" --- CoC (Autocompletion) ---
+" Standard CoC configuration for Tab and Enter key completion
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : <SID>check_back_space() ? "\<TAB>" : coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr> <CR> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+
+" --- Lua Plugin Configurations ---
+lua << EOF
+-- Lualine (Status Bar)
+require('lualine').setup {
+  options = {
+    theme = 'gruvbox'
+    -- ... more options can be added here
+  }
+}
+
+-- THIS BLOCK FOR TELESCOPE --
+require('telescope').setup{
+  -- You can leave this empty for default settings,
+  -- or add configuration here later.
+}
+---------------------------------
+
+-- Nvim-tree (File Explorer)
+require("nvim-tree").setup()
+
+-- Toggleterm (Terminal)
+    -- --- New, Improved Version ---
+require("toggleterm").setup({
+  direction = 'float',
+  float_opts = {
+    -- A single or double border shows titles more clearly than 'curved'
+    border = 'single',
+    -- The title will now be visible, showing the terminal number and command
+  },
+  -- This makes the terminal window slightly transparent
+  winblend = 10,
+})
+-- Gitsigns
+require('gitsigns').setup {
+  signs = {
+    add          = { text = '▎' },
+    change       = { text = '▎' },
+    delete       = { text = '' },
+    topdelete    = { text = '' },
+    changedelete = { text = '▎' },
+  },
+}
+
+-- Which-key
+require('which-key').setup {}
+
+
+EOF
