@@ -19,6 +19,7 @@ type Props = {
 
 const CartCard: React.FC<Props> = ({ item}) => {
   const subtotal = item.price * item.quantity;
+  console.log("cart item value is ",item);
   const savings = Math.max(0, (item.oldPrice || item.price) - item.price);
   const [quantity, setQuantity] = useState<number>(item?.quantity || 1);
   // const [isQuantityInitialized, setIsQuantityInitialized] = useState(false);
@@ -78,6 +79,7 @@ const CartCard: React.FC<Props> = ({ item}) => {
   const RemoveFromCart = useCallback((e:React.MouseEvent) => {
      e.stopPropagation(); 
     if (!item) return;
+    console.log("item in card cart ",item);
     if (window.confirm(`Remove ${item?.name} from your cart?`)) {
       dispatch(removeFromCart(item.id));
     }
@@ -90,7 +92,7 @@ const CartCard: React.FC<Props> = ({ item}) => {
         {/* Image */}
         <div className="flex-shrink-0">
           <img
-            src={item.image[0]}
+            src={item.image}
             alt={item.name}
             className="w-16 h-20 sm:w-24 sm:h-28 object-cover rounded border border-gray-100"
           />

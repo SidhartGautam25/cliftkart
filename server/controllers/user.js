@@ -9,7 +9,7 @@ import {
   getUser,
   updateCartItemQuantity,
 } from "../utils/userUtility.js";
-import twilio from "twilio"
+// import twilio from "twilio"
 
 // export const refreshToken = handleAsyncError(async (req, res, next) => {
 //   console.log("you are in refresh token controller");
@@ -291,7 +291,7 @@ export const getCartItems = handleAsyncError(async (req, res, next) => {
   const userId = req.user._id;
   console.log("req.user is ", req.user);
   const result = await User.getCartWithProducts(userId);
-
+  console.log("result is ",result);
   if (!result) {
     return next(new HandleError("User Not Found ", 404));
   }
@@ -306,11 +306,15 @@ export const getCartItems = handleAsyncError(async (req, res, next) => {
     image: item.product.image,
     quantity: item.quantity,
   }));
+  console.log("cart Items is before sending to client is ",cartItems);
   res.status(200).json({
     success: true,
     cartItems,
   });
 });
+
+
+
 
 
 export const removeItemFromCart = handleAsyncError(async (req, res, next) => {

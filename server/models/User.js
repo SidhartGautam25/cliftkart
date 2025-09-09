@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
+import ObjectId from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -85,8 +86,6 @@ userSchema.methods.verifyPassword = async function (pass) {
   // }
   // return false;
 };
-
-
 userSchema.statics.getCartWithProducts = async function (userId) {
   return await this.aggregate([
     {

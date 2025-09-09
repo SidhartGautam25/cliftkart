@@ -8,7 +8,7 @@ const CartC: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { cartItems } = useAppSelector((state) => state.cart);
-
+  console.log("cartItems in the cart page is ",cartItems);
   const { isAuthenticated } = useAppSelector((state) => state.user);
   useEffect(() => {
     if(isAuthenticated){

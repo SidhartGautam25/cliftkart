@@ -610,7 +610,7 @@ const CProductC: React.FC = () => {
   const [isColor,setIsColor]=useState(false);
   const [isSize,setIsSize]=useState(false);
   const MAX_IMAGES = 5;
-
+  const [stockDetail, setStockDetail] = useState({});
   const { error, success, loading } = useAppSelector((state) => state.admin);
   const dispatch = useAppDispatch();
 
@@ -631,6 +631,7 @@ const CProductC: React.FC = () => {
       setSubcategories(null);
     }
 
+
     if(items?.colors){
       setIsColor(true);
     }
@@ -638,6 +639,15 @@ const CProductC: React.FC = () => {
       setIsSize(true);
     }
   };
+
+
+const handleStockDetailChange = (size:string, value:string) => {
+  setStockDetail(prevDetails => ({
+    ...prevDetails,
+    [size]: value === '' ? undefined : Number(value) // Update the specific size, convert to number
+  }));
+};
+
 
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -702,6 +712,7 @@ const CProductC: React.FC = () => {
         subcat,
         size,
         colors:color,
+        stockDetail
       })
     );
   };
@@ -971,6 +982,40 @@ const CProductC: React.FC = () => {
                 </div>
               )}
             </div>
+
+
+ {/* ================================================================== */}
+        {/* Detailed Stock by Size (NEW SECTION)                            */}
+        {/* ================================================================== */}
+        <div className="space-y-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Detailed Stock by Size
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg">
+            {size.map((s) => (
+              <div key={s} className="space-y-1">
+                <label
+                  htmlFor={`stock-${s}`}
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Stock for Size: <span className="font-bold">{s}</span>
+                </label>
+                <input
+                  id={`stock-${s}`}
+                  type="number"
+                  placeholder="e.g., 10"
+                  name={s}
+                  value={stockDetail[s] || ''}
+                  onChange={(e) => handleStockDetailChange(s, e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+
+
 
             {/* Stock */}
             <div className="space-y-2">
