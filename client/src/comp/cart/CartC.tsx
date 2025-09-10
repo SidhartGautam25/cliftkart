@@ -8,7 +8,7 @@ const CartC: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { cartItems } = useAppSelector((state) => state.cart);
-
+  console.log("cartItems in the cart page is ",cartItems);
   const { isAuthenticated } = useAppSelector((state) => state.user);
   useEffect(() => {
     if(isAuthenticated){
@@ -55,7 +55,7 @@ const CartC: React.FC = () => {
     </div>
 
     {/* Cart Summary */}
-    <div className="w-full lg:w-80 bg-white rounded-xl shadow p-6 sticky top-6 lg:top-24">
+    <div className="w-full lg:w-80 bg-white rounded-xl shadow p-6 sticky top-6 lg:top-24 self-start h-fit">
     <h2 className="text-xl font-semibold text-gray-800 mb-4">
     Cart Summary
     </h2>

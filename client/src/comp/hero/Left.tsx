@@ -35,16 +35,27 @@ const Left: React.FC = () => {
       >
         <ul className="space-y-3 text-base text-gray-700">
           {categories.map((item, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center cursor-pointer hover:text-black hover:font-medium transition"
-            >
-              <a href={`/products/${item.str}`} className="flex-1">
-                {item.name}
-              </a>
-              <FaChevronRight className="text-sm ml-2" />
-            </li>
-          ))}
+  <li
+    key={index}
+    // Added padding and a subtle hover background for better interaction
+    className="flex justify-between items-center cursor-pointer rounded-lg hover:bg-gray-100 transition"
+  >
+    {/* This link now uses flexbox to align the image and text */}
+    <a href={`/products/${item.str}`} className="flex items-center gap-3 flex-1">
+      {/* 1. Image section added */}
+      <img
+        src={item.image}
+        alt={item.name} // Alt text is important for accessibility
+        className="w-6 h-6 object-cover rounded-full" // Styling for a circular image
+      />
+      {/* 2. Name is wrapped in a span for better control */}
+      <span className="font-medium text-gray-700 group-hover:text-black">
+        {item.name}
+      </span>
+    </a>
+    <FaChevronRight className="text-sm ml-2 text-gray-400" />
+  </li>
+))}
         </ul>
       </div>
     </aside>

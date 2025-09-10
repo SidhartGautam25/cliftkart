@@ -20,7 +20,7 @@ const Product: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col md:flex-row max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto px-4 py-4">
         <ProductImages />
         <ProductInfo />
       </div>

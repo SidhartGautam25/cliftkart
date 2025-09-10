@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
+import ObjectId from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -85,13 +86,18 @@ userSchema.methods.verifyPassword = async function (pass) {
   // }
   // return false;
 };
-
-
 userSchema.statics.getCartWithProducts = async function (userId) {
   return await this.aggregate([
     {
       $match: { _id: new mongoose.Types.ObjectId(userId) }
     },
+     // Unwind the cart array to work with individual cart items
+      {
+        $unwind: {
+          path: "$cart",
+          preserveNullAndEmptyArrays: true
+        }
+      },
     {
       $lookup: {
         from: "products", // Collection name (usually lowercase and plural)
@@ -100,54 +106,113 @@ userSchema.statics.getCartWithProducts = async function (userId) {
         as: "cartProducts"
       }
     },
-    {
-      $project: {
-        _id: 1,
-        name: 1,
-        email: 1,
-        cart: {
-          $map: {
-            input: "$cart",
-            as: "cartItem",
-            in: {
-              $let: {
-                vars: {
-                  product: {
-                    $arrayElemAt: [
-                      {
-                        $filter: {
-                          input: "$cartProducts",
-                          cond: { $eq: ["$$this._id", "$$cartItem.productId"] }
-                        }
-                      },
-                      0
-                    ]
-                  }
-                },
-                in: {
-                  productId: "$$cartItem.productId",
-                  quantity: "$$cartItem.quantity",
-                  addedAt: "$$cartItem.addedAt",
-                  product: {
-                    _id: "$$product._id",
-                    name: "$$product.name",
-                    description: "$$product.description",
-                    price: "$$product.price",
-                    image: "$$product.image",
-                    stock: "$$product.stock",
-                    isActive: "$$product.isActive"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  ]);
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     name: 1,
+    //     email: 1,
+    //     cart: {
+    //       $map: {
+    //         input: "$cart",
+    //         as: "cartItem",
+    //         in: {
+    //           $let: {
+    //             vars: {
+    //               product: {
+    //                 $arrayElemAt: [
+    //                   {
+    //                     $filter: {
+    //                       input: "$cartProducts",
+    //                       cond: { $eq: ["$$this._id", "$$cartItem.productId"] }
+    //                     }
+    //                   },
+    //                   0
+    //                 ]
+    //               }
+    //             },
+    //             in: {
+    //               productId: "$$cartItem.productId",
+    //               quantity: "$$cartItem.quantity",
+    //               addedAt: "$$cartItem.addedAt",
+    //               product: {
+    //                 _id: "$$product._id",
+    //                 name: "$$product.name",
+    //                 description: "$$product.description",
+    //                 price: "$$product.price",
+    //                 image: "$$product.image",
+    //                 stock: "$$product.stock",
+    //                 isActive: "$$product.isActive"
+    //               }
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+]);
 };
 
+userSchema.statics.getCartWithProductsPopulate = async function (userId) {
+  try {
+    const user = await this.findById(userId).populate({
+      path: 'cart.productId',
+      model: 'Product'
+    });
+    
+    return user;
+  } catch (error) {
+    console.error("Error in getCartWithProductsPopulate:", error);
+    throw error;
+  }
+}
 
 
+// Alternative simpler method using populate
+userSchema.statics.getCartWithProductsSimple = async function (userId) {
+  try {
+    const user = await this.findById(userId).populate({
+      path: 'cart.productId',
+      model: 'Product',
+      select: 'id name description price image stock ratings category discount colors size' // Select only needed fields
+    });
+    
+    if (!user) {
+      return null;
+    }
 
+    // Transform the populated data to match your needs
+    const transformedCart = user.cart.map(cartItem => ({
+      productId: cartItem.productId,
+      quantity: cartItem.quantity,
+      product: cartItem.productId ? {
+        id: cartItem.productId.id,
+        _id: cartItem.productId._id,
+        name: cartItem.productId.name,
+        description: cartItem.productId.description,
+        price: cartItem.productId.price,
+        image: cartItem.productId.image,
+        stock: cartItem.productId.stock,
+        ratings: cartItem.productId.ratings,
+        category: cartItem.productId.category,
+        discount: cartItem.productId.discount,
+        colors: cartItem.productId.colors,
+        size: cartItem.productId.size
+      } : null
+    }));
+
+    return [{
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      address: user.address,
+      cart: transformedCart
+    }];
+  } catch (error) {
+    console.error("Error in getCartWithProductsSimple:", error);
+    throw error;
+  }
+};
 export default mongoose.model("User", userSchema);

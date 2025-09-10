@@ -45,6 +45,11 @@ const productSchema = new mongoose.Schema({
     maxLength: [5, "Price cannot exceed 5 digits"],
     default: 100,
   },
+  stockDetail: {
+    type: Map,
+    of: Number, // Specifies that the values of the key-value pairs will be numbers
+    default: {},
+  },
   colors: [{
     type:String,
     default:""

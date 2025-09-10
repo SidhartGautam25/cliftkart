@@ -179,6 +179,7 @@ export const categories = [
     ssize:true,
     quant2:false,
     quant1:false,
+    image:"catIcon/kidClothes.jpeg",
     subcategories: [
       {
         id: "1-1",
@@ -205,6 +206,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/homeKit.jpeg",
     subcategories: [
       {
         id: "2-1",
@@ -236,6 +238,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/kidClothes.jpeg",
     subcategories: [
       {
         id: "3-1",
@@ -267,6 +270,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/jwelry.jpeg",
     subcategories: [
       {
         id: "4-1",
@@ -293,6 +297,7 @@ export const categories = [
     ssize:true,
     quant1:false,
     quant2:false,
+    image:"catIcon/bags.jpeg",
     subcategories: [
       {
         id: "5-1",
@@ -319,6 +324,7 @@ export const categories = [
     ssize:true,
     quant1:false,
     quant2:false,
+    image:"catIcon/footwear.jpeg",
     subcategories: [
       {
         id: "6-1",
@@ -345,6 +351,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/watches.jpeg",
     subcategories: [
       {
         id: "7-1",
@@ -366,6 +373,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/grocery.jpeg",
     subcategories: [
       {
         id: "8-1",
@@ -382,6 +390,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/books.jpeg",
     subcategories: [
       {
         id: "9-1",
@@ -398,6 +407,7 @@ export const categories = [
     ssize:true,
     quant1:false,
     quant2:false,
+    image:"catIcon/lingree.jpeg",
     subcategories: [
       {
         id: "10-1",
@@ -424,6 +434,7 @@ export const categories = [
     ssize:true,
     quant1:false,
     quant2:false,
+    image:"catIcon/men.jpeg",
     subcategories: [
       {
         id: "11-1",
@@ -460,6 +471,7 @@ export const categories = [
     ssize:true,
     quant1:false,
     quant2:false,
+    image:"catIcon/women.jpeg",
     subcategories: [
       {
         id: "12-1",
@@ -517,6 +529,7 @@ export const categories = [
     id: "13",
     str: "stationary",
     name: "Stationary",
+    image:"catIcon/books.jpeg",
     subcategories: [],
      colors:false,
     ssize:false,
@@ -532,6 +545,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/sports.jpeg",
     subcategories: [] // No subcategories listed in image
   },
   {
@@ -542,7 +556,18 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
+    image:"catIcon/fitness.jpeg",
     subcategories: [] // No subcategories listed in image
+  },{
+    id:"16",
+    str:"giftsAndGadget",
+    name:"Gifts & Gadget",
+    colors:false,
+    ssize:false,
+    quant1:false,
+    quant2:false,
+    image:"catIcon/gag.jpeg",
+    subcategories:[]
   }
 ];
 
