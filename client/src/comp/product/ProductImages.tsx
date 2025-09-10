@@ -83,7 +83,7 @@ const ProductImages: React.FC = () => {
   }
 
   return (
-    <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4">
+    <div className="w-full md:w-1/2 flex flex-col md:flex-row gap-4 h-[600px]">
       {/* Thumbnails */}
       <div className="flex md:flex-col gap-3 order-first md:order-none">
         {thumbnailImages.map((img: string, i: number) => (
@@ -103,12 +103,12 @@ const ProductImages: React.FC = () => {
       </div>
 
       {/* Main Image */}
-      <div className="flex-1 bg-gray-100 flex items-center justify-center p-4 rounded-lg">
+      <div className="flex-1 bg-gray-100 flex items-center justify-center p-2 rounded-lg">
         {selectedImage && (
           <img
             src={selectedImage}
             alt="Main product"
-            className="max-h-96 w-auto object-contain"
+            className="w-full h-full object-cover"
           />
         )}
       </div>

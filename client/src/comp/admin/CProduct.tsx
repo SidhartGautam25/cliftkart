@@ -610,7 +610,7 @@ const CProductC: React.FC = () => {
   const [isColor,setIsColor]=useState(false);
   const [isSize,setIsSize]=useState(false);
   const MAX_IMAGES = 5;
-  const [stockDetail, setStockDetail] = useState({});
+  const [stockDetail, setStockDetail] = useState<Record<string,number>>({});
   const { error, success, loading } = useAppSelector((state) => state.admin);
   const dispatch = useAppDispatch();
 
@@ -641,13 +641,30 @@ const CProductC: React.FC = () => {
   };
 
 
-const handleStockDetailChange = (size:string, value:string) => {
-  setStockDetail(prevDetails => ({
-    ...prevDetails,
-    [size]: value === '' ? undefined : Number(value) // Update the specific size, convert to number
-  }));
-};
+// const handleStockDetailChange = (size:string, value:string) => {
+//   setStockDetail(prevDetails => ({
+//     ...prevDetails,
+//     [size]: value === '' ? undefined : Number(value) // Update the specific size, convert to number
+//   }));
+// };
+const handleStockDetailChange = (size: string, value: string) => {
+  setStockDetail(prevDetails => {
+    // 1. Create a mutable copy of the previous state
+    const newDetails = { ...prevDetails };
 
+    // 2. Check the input value
+    if (value === '' || isNaN(Number(value))) {
+      // 3. If the input is empty or not a number, DELETE the key
+      delete newDetails[size];
+    } else {
+      // 4. Otherwise, set the key with the new number value
+      newDetails[size] = Number(value);
+    }
+
+    // 5. Return the newly modified object
+    return newDetails;
+  });
+};
 
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -992,7 +1009,7 @@ const handleStockDetailChange = (size:string, value:string) => {
             Detailed Stock by Size
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg">
-            {size.map((s) => (
+            {size.map((s:string) => (
               <div key={s} className="space-y-1">
                 <label
                   htmlFor={`stock-${s}`}
@@ -1005,7 +1022,7 @@ const handleStockDetailChange = (size:string, value:string) => {
                   type="number"
                   placeholder="e.g., 10"
                   name={s}
-                  value={stockDetail[s] || ''}
+                  value={stockDetail?.[s] ?? ''}
                   onChange={(e) => handleStockDetailChange(s, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 />

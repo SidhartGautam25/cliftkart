@@ -24,17 +24,10 @@ interface CartItem {
 
 const ProductInfo: React.FC = () => {
   // Default options
-  const sizes = ["XS", "S", "M", "L", "XL"];
-  const bookFormats = ["Paperback", "Hardcover"];
-  const electronicsColors = ["black", "silver", "white"];
-  const shoeSizes = ["6", "7", "8", "9", "10", "11"];
-  const furnitureMaterials = ["Wood", "Metal", "Plastic"];
-// for now
-  const [selectedSize, setSelectedSize] = useState("M");
-  const [selectedFormat, setSelectedFormat] = useState("Paperback");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor , setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState<number>(1);
   const [isQuantityInitialized, setIsQuantityInitialized] = useState(false);
-
   const { loading, error, product } = useAppSelector((state) => state.product);
   const { isAuthenticated } = useAppSelector((state) => state.user);
   const {
@@ -44,9 +37,34 @@ const ProductInfo: React.FC = () => {
     message,
     cartItems,
   } = useAppSelector((state) => state.cart);
+  console.log("product in this section of product page is ",product);
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+
+
+
+  const availSizes=product?.size || [];
+  const availColors=product?.colors  || [];
+  const sizeCase=availSizes.length >= 0 ? true : false;
+  const colorCase=availColors.length >= 0 ? true : false;
+  
+
+  useEffect(() => {
+  
+  if (product) {
+    
+    if (availSizes.length > 0) {
+      setSelectedSize(availSizes[0]);
+    }
+    
+    if (availColors.length > 0) {
+      setSelectedColor(availColors[0]);
+    }
+  }
+}, [product]);
+
 
   // Cart logic
   const cartItem = useMemo(
@@ -161,24 +179,30 @@ const ProductInfo: React.FC = () => {
   }, [id, product?.name, dispatch]);
 
   // Dynamic render helpers
-  const renderDynamicColors = (colors: string[]) => (
+  const renderDynamicColors = () => (
     <div className="flex items-center gap-2 flex-wrap">
       <span className="font-medium">Colours:</span>
-      {colors.map((color, index) => (
+      {availColors.map((color: string, index: number) => (
         <button
           key={index}
-          className="w-5 h-5 rounded-full border shadow-sm"
+          onClick={() => setSelectedColor(color)} // Set the selected color on click
+          className={`w-6 h-6 rounded-full border shadow-sm transition-transform duration-200 ease-in-out
+            ${
+              selectedColor === color
+                ? 'ring-2 ring-offset-2 ring-black scale-110' // Style for the selected color
+                : 'border-gray-300' // Default style
+            }
+          `}
           style={{ backgroundColor: color }}
           title={color}
         />
       ))}
     </div>
   );
-
-  const renderSizeOptions = (options: string[]) => (
+  const renderSizeOptions = () => (
     <div className="flex items-center gap-2 flex-wrap">
       <span className="font-medium">Size:</span>
-      {options.map((size) => (
+      {availSizes.map((size : string) => (
         <button
           key={size}
           className={`px-3 py-1 border rounded ${
@@ -193,41 +217,6 @@ const ProductInfo: React.FC = () => {
       ))}
     </div>
   );
-
-  const renderBookFormats = () => (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="font-medium">Format:</span>
-      {bookFormats.map((format) => (
-        <button
-          key={format}
-          className={`px-3 py-1 border rounded ${
-            selectedFormat === format
-              ? "bg-black text-white"
-              : "text-black border-gray-300"
-          }`}
-          onClick={() => setSelectedFormat(format)}
-        >
-          {format}
-        </button>
-      ))}
-    </div>
-  );
-
-  const renderMaterials = (materials: string[]) => (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="font-medium">Material:</span>
-      {materials.map((mat) => (
-        <button
-          key={mat}
-          className="px-3 py-1 border rounded text-black border-gray-300"
-        >
-          {mat}
-        </button>
-      ))}
-    </div>
-  );
-
-  const category = product?.category?.toLowerCase();
 
   if (!id) {
     return <div className="text-center text-red-500">Invalid product ID</div>;
@@ -251,22 +240,16 @@ const ProductInfo: React.FC = () => {
       <p className="text-sm text-gray-600">{product?.description}</p>
       <hr />
 
-      {category === "fashion" && (
+      {colorCase && (
         <>
-          {renderDynamicColors(["red", "blue", "black", "green"])}
-          {renderSizeOptions(sizes)}
+          {renderDynamicColors()}
         </>
       )}
-      {category === "watches" && renderDynamicColors(["black", "brown", "silver"])}
-      {category === "books" && renderBookFormats()}
-      {category === "electronics" && renderDynamicColors(electronicsColors)}
-      {category === "shoes" && (
+       {sizeCase && (
         <>
-          {renderDynamicColors(["black", "white", "blue"])}
-          {renderSizeOptions(shoeSizes)}
+          {renderSizeOptions()}
         </>
       )}
-      {category === "furniture" && renderMaterials(furnitureMaterials)}
 
       {/* Quantity & Cart */}
       <div className="flex items-center gap-2 flex-wrap">

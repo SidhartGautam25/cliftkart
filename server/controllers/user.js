@@ -287,34 +287,119 @@ export const addToCart = handleAsyncError(async (req, res, next) => {
 // });
 
 // with aggregation
+// export const getCartItems = handleAsyncError(async (req, res, next) => {
+//   const userId = req.user._id;
+//   console.log("req.user is ", req.user);
+//   const result = await User.getCartWithProducts(userId);
+//   console.log("result is ",result);
+//   if (!result) {
+//     return next(new HandleError("User Not Found ", 404));
+//   }
+//   // console.log("result is ",result[0].cart);
+//   const user = result[0];
+//   const cart = user.cart;
+//   console.log("cart is ", cart);
+//   const cartItems = cart.map((item) => ({
+//     id: item.productId.toString(),
+//     name: item.product.name,
+//     price: item.product.price,
+//     image: item.product.image,
+//     quantity: item.quantity,
+//   }));
+//   console.log("cart Items is before sending to client is ",cartItems);
+//   res.status(200).json({
+//     success: true,
+//     cartItems,
+//   });
+// });
+
+// Updated Controller
+// export const getCartItems = handleAsyncError(async (req, res, next) => {
+//   const userId = req.user._id;
+//   console.log("req.user is ", req.user);
+  
+//   // Use the simpler populate method
+//   const result = await User.getCartWithProductsSimple(userId);
+//   console.log("result is ", result);
+  
+//   if (!result || result.length === 0) {
+//     return next(new HandleError("User Not Found ", 404));
+//   }
+
+//   const user = result[0];
+//   const cart = user.cart || [];
+//   console.log("cart is ", cart);
+
+//   // Filter out items where product is null (deleted products)
+//   const validCartItems = cart.filter(item => item.product !== null);
+
+//   const cartItems = validCartItems.map((item) => ({
+//     id: item.product.id || item.product._id.toString(), // Use custom id field or fallback to _id
+//     name: item.product.name,
+//     price: item.product.price,
+//     image: item.product.image,
+//     quantity: item.quantity,
+//     // Optional: add more fields if needed
+//     stock: item.product.stock,
+//     discount: item.product.discount,
+//     category: item.product.category
+//   }));
+// console.log("cart Items before sending to client is ", cartItems);
+  
+//   res.status(200).json({
+//     success: true,
+//     cartItems,
+//     totalItems: cartItems.length
+//   });
+// });
+
+
+// controller
+// export const getCartItems = handleAsyncError(async (req, res, next) => {
+//   const userId = req.user._id;
+
+//   const user = await User.findById(userId).populate("cart.productId");
+//   if (!user) {
+//     return next(new HandleError("User Not Found", 404));
+//   }
+//   console.log("user is ",user);
+//   const cartItems = user.cart.map((item) => ({
+//     id: item.productId._id.toString(),
+//     name: item.productId.name,
+//     price: item.productId.price,
+//     image: item.productId.image,
+//     quantity: item.quantity,
+//   }));
+//   console.log("cartItems is ",cartItems);
+//   res.status(200).json({
+//     success: true,
+//     cartItems,
+//   });
+// });
+
+// controller
 export const getCartItems = handleAsyncError(async (req, res, next) => {
   const userId = req.user._id;
-  console.log("req.user is ", req.user);
-  const result = await User.getCartWithProducts(userId);
-  console.log("result is ",result);
-  if (!result) {
-    return next(new HandleError("User Not Found ", 404));
+
+  const user = await User.findById(userId).populate("cart.productId");
+  if (!user) {
+    return next(new HandleError("User Not Found", 404));
   }
-  // console.log("result is ",result[0].cart);
-  const user = result[0];
-  const cart = user.cart;
-  console.log("cart is ", cart);
-  const cartItems = cart.map((item) => ({
-    id: item.productId.toString(),
-    name: item.product.name,
-    price: item.product.price,
-    image: item.product.image,
+   console.log("user.cart = ", JSON.stringify(user.cart, null, 2));
+  const cartItems = user.cart.filter(item=>item.productId)
+    .map((item) => ({
+    id: item.productId._id.toString(),
+    name: item.productId.name,
+    price: item.productId.price,
+    image: item.productId.image,
     quantity: item.quantity,
   }));
-  console.log("cart Items is before sending to client is ",cartItems);
+console.log("cartItems is  ",cartItems);
   res.status(200).json({
     success: true,
     cartItems,
   });
 });
-
-
-
 
 
 export const removeItemFromCart = handleAsyncError(async (req, res, next) => {
