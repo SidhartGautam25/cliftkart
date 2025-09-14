@@ -49,9 +49,9 @@ function App(): JSX.Element {
         <Route path="/payment" element={<PaymentC/>}/>
          <Route path="/reset-password" element={<ForgotPasswordPage/>}/>
         {/* admin routes */}
-        <Route path="/admin/product/create" element={<ProtectedRoute element={<CreateProduct/>}  adminOnly={true}/>}/>
-        <Route path="/admin" element={<ProtectedRoute element={<AdminHome/>} adminOnly={true}/>}/>
-        <Route path="/admin/product/edit/:id" element={<ProtectedRoute element={<EditProduct/>} adminOnly={true}/>}/>
+        <Route path="/admin/product/create" element={<ProtectedRoute element={<CreateProduct/>}  emp={true} adminOnly={true}/>}/>
+        <Route path="/admin" element={<ProtectedRoute element={<AdminHome/>} adminOnly={true} emp={true}/>}/>
+        <Route path="/admin/product/edit/:id" element={<ProtectedRoute element={<EditProduct/>} emp={true} adminOnly={true}/>}/>
       </Routes>
     </Router>
   );
