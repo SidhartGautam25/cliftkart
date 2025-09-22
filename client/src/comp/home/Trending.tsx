@@ -80,7 +80,7 @@ const TrendingNow: React.FC = () => {
               <h4 className="text-sm font-medium mb-1">{product.name}</h4>
               <div className="flex justify-center sm:justify-start items-center text-sm text-gray-700 space-x-2 mb-1">
                 <span className="text-[#ED145B] font-semibold">
-                  ${product.price}
+                   ₹{product.price}
                 </span>
                 {/* <span className="line-through text-gray-400 text-xs">
                   ${product.price}
