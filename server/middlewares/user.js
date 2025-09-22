@@ -16,7 +16,10 @@ export const verifyUser=handleAsyncError(async(req,res,next)=>{
 })
 
 export const roleBasedAccess=(...roles)=>{
+  console.log("roles is ",roles);
+  
     return(req,res,next)=>{
+        console.log("user role is ",req.user.role);
         if(!roles.includes(req.user.role)){
             return next(new HandleError(`Role - ${req.user.role} is not allowed to access the resources `,403));
         }

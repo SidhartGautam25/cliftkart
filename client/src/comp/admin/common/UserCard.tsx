@@ -7,14 +7,14 @@ import {  ToastContainer } from "react-toastify";
 interface UserCardProps {
   user: Record<string,any>;
   onDelete: (id: string) => void;
-  onRoleChange: (id: string, role: "user" | "admin") => void;
+  onRoleChange: (id: string, role: "user" | "admin" | "emp") => void;
 }
 
 const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onRoleChange }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<"user" | "admin">(user.role);
+  const [selectedRole, setSelectedRole] = useState<"user" | "admin" | "emp">(user.role);
 
-  const handleRoleChange = (role: "user" | "admin") => {
+  const handleRoleChange = (role: "user" | "admin" | "emp") => {
     setSelectedRole(role);
     onRoleChange(user._id, role);
     setShowDropdown(false);
@@ -67,6 +67,15 @@ const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onRoleChange }) => 
               >
                 Admin
               </button>
+              <button
+                onClick={() => handleRoleChange("emp")}
+                className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                  selectedRole === "emp" ? "bg-blue-100 font-semibold" : ""
+                }`}
+              >
+                Emp
+              </button>
+
             </div>
           )}
         </div>

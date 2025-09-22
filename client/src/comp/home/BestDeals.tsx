@@ -51,10 +51,8 @@ const BestDeals: React.FC = () => {
             <h3 className="text-sm font-medium line-clamp-2">{product.name}</h3>
             <div className="flex items-center justify-between text-sm">
               <div>
-                <p className="text-blue-600 font-semibold">${product.price}</p>
-                {product.price && (
-                  <p className="text-gray-400 line-through text-xs">₹{product.price}</p>
-                )}
+                <p className="text-blue-600 font-semibold"> ₹{product.price}</p>
+                
               </div>
               {/* <p className="text-yellow-500 text-xs">⭐ {product.rating}</p> */}
             </div>

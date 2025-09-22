@@ -4,13 +4,15 @@ import { useAppDispatch, useAppSelector } from "../../../context/hooks";
 import { toast } from "react-toastify";
 import { fetchUsers, updateUserRole } from "../../../context/admin/adminSlice";
 import UserCard from "../common/UserCard";
+import {useAuth} from "../../../context/hooks/auth";
 
 
 
 
 const UsersComponent: React.FC = () => {
   const { users, error,updated} = useAppSelector((state) => state.admin);
-
+  const { user} = useAuth();
+ const role = user?.role;
   const dispatch = useAppDispatch();
 
    // Dummy delete handler
@@ -19,21 +21,27 @@ const UsersComponent: React.FC = () => {
     toast.info("Delete handler not implemented yet");
   };
 
-  const handleRoleChange = (id: string, role: "user" | "admin") => {
+  const handleRoleChange = (id: string, role: "user" | "admin" | "emp") => {
     console.log("Change role for", id, "to", role);
     const userId=id;
+    if(role !== 'admin'){
+      toast.error("Sorry, you are not eligible to do that");
+      return;
+    }
     dispatch(updateUserRole({userId,role}))
     toast.success(`Role changed to ${role}`);
   };
 
   useEffect(() => {
-    dispatch(fetchUsers());
-  }, [dispatch]);
+    if(role==='admin'){
+        dispatch(fetchUsers());
+    }
+  }, [dispatch,role]);
 
   useEffect(() => {
-    console.log("need to update the state of admin")
+    if(role==='admin'){
     dispatch(fetchUsers());
-  }, [updated]);
+  }}, [updated,role,dispatch]);
 
   useEffect(() => {
     if (error) {

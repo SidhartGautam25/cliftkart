@@ -7,9 +7,10 @@ import { useAuth } from "../../context/hooks/auth";
 interface ProtectedRouteProps {
   element: ReactElement;
   adminOnly?: boolean;
+  emp?:boolean;
 }
 
-function ProtectedRoute({ element, adminOnly = false }: ProtectedRouteProps) {
+function ProtectedRoute({ element, adminOnly = false , emp=false }: ProtectedRouteProps) {
   // const { isAuthenticated, loading, user } = useAppSelector(state => state.user);
 
   // if (loading) {
@@ -35,9 +36,18 @@ function ProtectedRoute({ element, adminOnly = false }: ProtectedRouteProps) {
     console.log("you are here ");
     return <Navigate to="/login" />;
   }
-  if(adminOnly && user?.role !== 'admin'){
-    return <Navigate to = '/'/>
+
+  if(emp || adminOnly){
+    if(user?.role === 'user'){
+      return <Navigate to='/'/>
+    }
   }
+
+
+
+//   if(adminOnly && user?.role !== 'admin'){
+//     return <Navigate to = '/'/>
+//   }
 
   return element;
 }

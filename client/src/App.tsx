@@ -23,6 +23,8 @@ import PaymentC from "./comp/payment/Payment.tsx";
 import ScrollToTop from "./comp/common/ScrollToTop.tsx";
 import ProductsByTag from "./pages/tagProduct.tsx";
 import AuthenticatedRoute from "./comp/common/AuthenticatedRoute.tsx";
+import {elements} from "chart.js";
+import CheckoutPage from "./pages/checkout.tsx";
 
 function App(): JSX.Element {
    //const dispatch = use AppDispatch();
@@ -46,12 +48,13 @@ function App(): JSX.Element {
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile/>}/>
         <Route path="/cart" element={<AuthenticatedRoute element={<CartPage/>} required={true}/>}/>
+        <Route path="/checkout" element={<AuthenticatedRoute element={<CheckoutPage/>} required={true}/>}/>
         <Route path="/payment" element={<PaymentC/>}/>
          <Route path="/reset-password" element={<ForgotPasswordPage/>}/>
         {/* admin routes */}
-        <Route path="/admin/product/create" element={<ProtectedRoute element={<CreateProduct/>}  adminOnly={true}/>}/>
-        <Route path="/admin" element={<ProtectedRoute element={<AdminHome/>} adminOnly={true}/>}/>
-        <Route path="/admin/product/edit/:id" element={<ProtectedRoute element={<EditProduct/>} adminOnly={true}/>}/>
+        <Route path="/admin/product/create" element={<ProtectedRoute element={<CreateProduct/>}  emp={true} adminOnly={true}/>}/>
+        <Route path="/admin" element={<ProtectedRoute element={<AdminHome/>} adminOnly={true} emp={true}/>}/>
+        <Route path="/admin/product/edit/:id" element={<ProtectedRoute element={<EditProduct/>} emp={true} adminOnly={true}/>}/>
       </Routes>
     </Router>
   );

@@ -5,4 +5,4 @@
 // const prod_url='http://api.cliftkart.com';
 const ssl_prod_url='https://api.cliftkart.com'
 export const url=ssl_prod_url;
-//export const url=dev_url;
+// export const url=dev_url;
