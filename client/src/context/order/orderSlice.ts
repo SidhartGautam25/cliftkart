@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 
 // Types
 interface Order {
@@ -12,6 +13,8 @@ interface OrderState {
   error: string | null;
   orders: Order[];
   order: Order;
+  totalPages?:number;
+  currentPage?:number;
 }
 
 interface CreateOrderResponse {
@@ -34,17 +37,21 @@ interface ApiError {
   [key: string]: any;
 }
 
+
+interface GetOrdersResponse {
+  orders: Order[];
+  success: boolean;
+  totalPages?: number;
+  currentPage?: number;
+}
+
+
 // Creating Order
 export const createOrder = createAsyncThunk<CreateOrderResponse, any, { rejectValue: ApiError }>(
   'order/createOrder',
   async (order, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-      const { data } = await axios.post('/api/v1/new/order', order, config);
+      const { data } = await axiosInstance.post('/api/v1/new/order', order);
       return data;
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;
@@ -58,7 +65,7 @@ export const getAllMyOrders = createAsyncThunk<GetAllMyOrdersResponse, void, { r
   'order/getAllMyOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get('/api/v1/orders/user');
+      const { data } = await axiosInstance.get('/api/v1/orders/user');
       return data;
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;
@@ -81,6 +88,19 @@ export const getOrderDetails = createAsyncThunk<GetOrderDetailsResponse, string,
   }
 );
 
+export const getOrdersByDate = createAsyncThunk<GetOrdersResponse, { date: string; page: number }, { rejectValue: ApiError }>(
+    'order/getOrdersByDate',
+    async ({ date , page }, { rejectWithValue }) => {
+        try {
+            const { data } = await axiosInstance.get(`/api/v1/orders/date?date=${date}&page=${page}`);
+            return data;
+        } catch (error) {
+            const axiosError = error as AxiosError<ApiError>;
+            return rejectWithValue(axiosError.response?.data || { message: 'Failed to fetch orders by date' });
+        }
+    }
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState: {
@@ -88,7 +108,9 @@ const orderSlice = createSlice({
     loading: false,
     error: null,
     orders: [],
-    order: {}
+    order: {},
+    totalPages:1,
+    currentPage:1
   } as OrderState,
   reducers: {
     removeErrors: (state) => {
@@ -128,9 +150,29 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || 'Failed to fetch orders';
       }),
+
+       // NEW: Get Orders by Date
+      builder.addCase(getOrdersByDate.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+      })
+      .addCase(getOrdersByDate.fulfilled, (state, action: PayloadAction<GetOrdersResponse>) => {
+          state.loading = false;
+          state.orders = action.payload.orders;
+          state.totalPages = action.payload.totalPages || 1;
+          state.currentPage = action.payload.currentPage || 1;
+          state.success = action.payload.success;
+      })
+      .addCase(getOrdersByDate.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload?.message || 'Failed to fetch orders by date';
+      }),
+
+
+
     // Get Order Details
-    builder
-      .addCase(getOrderDetails.pending, (state) => {
+
+      builder.addCase(getOrderDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
       })

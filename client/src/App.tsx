@@ -23,8 +23,10 @@ import PaymentC from "./comp/payment/Payment.tsx";
 import ScrollToTop from "./comp/common/ScrollToTop.tsx";
 import ProductsByTag from "./pages/tagProduct.tsx";
 import AuthenticatedRoute from "./comp/common/AuthenticatedRoute.tsx";
-import {elements} from "chart.js";
 import CheckoutPage from "./pages/checkout.tsx";
+import OrderSuccessPage from "./comp/orders/Success.tsx";
+import OrderFailurePage from "./comp/orders/Failure.tsx";
+import OrdersPage from "./pages/orders.tsx";
 
 function App(): JSX.Element {
    //const dispatch = use AppDispatch();
@@ -44,6 +46,9 @@ function App(): JSX.Element {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/products/:category" element={<Products />} />
         <Route path="/products/tag/:tag" element={<ProductsByTag />} />
+        <Route path="/order/success" element={<OrderSuccessPage/>}/>
+        <Route path="/order/failure" element={<OrderFailurePage/>}/>
+        <Route path="/orders" element={<OrdersPage/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile/>}/>

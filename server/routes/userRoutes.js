@@ -1,5 +1,5 @@
 import express from "express";
-import { addAddress, addPhone, addToCart, getCartItems, Login, logout, refreshToken, registerUser, removeItemFromCart } from "../controllers/user.js";
+import { addAddress, addPhone, addToCart, getCartItems, Login, logout, refreshToken, registerUser, removeItemFromCart, updateCartItemProperties } from "../controllers/user.js";
 // import { verifyUser } from "../middlewares/user.js";
 import { verifyUser } from "../middlewares/user_2.js";
 import { roleBasedAccess } from "../middlewares/user.js";
@@ -17,7 +17,7 @@ router.route("/removeFromCart/:productId").delete(verifyUser,removeItemFromCart)
 router.route("/addAddress").post(verifyUser, addAddress);
 router.route("/addPhone").post(verifyUser, addPhone);
 router.route("/logout").post(logout);
-
+router.route("/cart/updateItem").put(verifyUser,updateCartItemProperties);
 // Admin
 router.route("/admin/users").get(verifyUser,roleBasedAccess('admin'), getUsersList);
 router.route("/admin/user/:id")

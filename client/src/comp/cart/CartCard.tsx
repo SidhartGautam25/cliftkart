@@ -86,7 +86,7 @@ const CartCard: React.FC<Props> = ({ item}) => {
   }, [item.id, item?.name, dispatch]);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full">
+     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 w-full">
       {/* Top row: Image | Main info (name/price/qty-on-desktop) | Subtotal */}
       <div className="flex items-start gap-4">
         {/* Image */}
@@ -104,7 +104,19 @@ const CartCard: React.FC<Props> = ({ item}) => {
           <h3 className="font-medium text-gray-900 text-sm sm:text-base line-clamp-2">
             {item.name}
           </h3>
-          {item.size && <p className="text-xs sm:text-sm text-gray-600 mt-1">Size: {item.size}</p>}
+          {item.properties.size && <p className="text-xs sm:text-sm text-gray-600 mt-1">Size: {item.properties.size}</p>}
+          {item.properties.color && (
+  <div className="flex items-center gap-2 mt-1">
+    <p className="text-xs sm:text-sm text-gray-600">
+      Color:
+    </p>
+    <div
+      className="w-4 h-4 rounded-full border border-gray-200 shadow-sm"
+      style={{ backgroundColor: item.properties.color }}
+      title={item.properties.color} // Shows the color code on hover
+    />
+  </div>
+)}
           {item.seller && (
             <p className="text-xs sm:text-sm text-gray-600">
               Seller: <span className="text-blue-600">{item.seller}</span>
@@ -203,7 +215,7 @@ const CartCard: React.FC<Props> = ({ item}) => {
         </button>
       </div>
     </div>
-  );
+ );
 };
 
 export default CartCard;
