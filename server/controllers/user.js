@@ -393,6 +393,7 @@ export const getCartItems = handleAsyncError(async (req, res, next) => {
     price: item.productId.price,
     image: item.productId.image,
     quantity: item.quantity,
+    properties: item.properties
   }));
 console.log("cartItems is  ",cartItems);
   res.status(200).json({
@@ -428,8 +429,174 @@ export const removeItemFromCart = handleAsyncError(async (req, res, next) => {
 
 })
 
+// export const updateCartItemProperties = handleAsyncError(async (req, res, next) => {
+//   console.log("you are trying to update the item properties");
+//   const { productId, properties } = req.body;
+//   console.log("details are");
+//   console.log(productId);
+//   console.log("properties are ");
+//   console.log(properties);
+//   const userId = req.user._id;
 
+//   // Basic validation
+//   if (!productId || !properties) {
+//     return next(new HandleError("Product ID and properties are required", 400));
+//   }
 
+//   const user = await User.findById(userId);
+
+//   if (!user) {
+//     return next(new HandleError("User not found", 404));
+//   }
+
+//   // Find the specific item in the cart
+//   const cartItem = user.cart.find(
+//     (item) => item.productId.toString() === productId.toString()
+//   );
+
+//   if (!cartItem) {
+//     return next(new HandleError("Item not found in cart", 404));
+//   }
+
+//   // Update the properties
+//   cartItem.properties = properties;
+
+//   // Save the updated user document
+//   await user.save({ validateBeforeSave: false });
+//   console.log("updated properties successfully");
+//   res.status(200).json({
+//     success: true,
+//     productId: cartItem.productId,
+//     properties: cartItem.properties,
+//     message: "Cart item properties updated successfully",
+//   });
+// });
+// export const updateCartItemProperties = handleAsyncError(async (req, res, next) => {
+//   console.log("=== UPDATE USING FINDONEANDUPDATE ===");
+//   const { productId, properties } = req.body;
+//   const userId = req.user._id;
+  
+//   console.log("Request data:", { productId, properties, userId });
+
+//   if (!productId || !properties) {
+//     return next(new HandleError("Product ID and properties are required", 400));
+//   }
+
+//   try {
+//     const updatedUser = await User.findOneAndUpdate(
+//       { 
+//         _id: userId,
+//         "cart.productId": productId 
+//       },
+//       { 
+//         $set: { "cart.$.properties": properties } 
+//       },
+//       { 
+//         new: true,
+//         runValidators: false 
+//       }
+//     );
+
+//     if (!updatedUser) {
+//       console.log("Update failed - user or cart item not found");
+//       return next(new HandleError("User or cart item not found", 404));
+//     }
+
+//     const updatedCartItem = updatedUser.cart.find(
+//       item => item.productId.toString() === productId.toString()
+//     );
+    
+//     console.log("Updated cart item:", JSON.stringify(updatedCartItem, null, 2));
+
+//     res.status(200).json({
+//       success: true,
+//       productId: updatedCartItem.productId,
+//       properties: updatedCartItem.properties,
+//       message: "Cart item properties updated successfully",
+//     });
+    
+//   } catch (error) {
+//     console.error("Error in findOneAndUpdate:", error);
+//     return next(new HandleError("Failed to update cart item properties", 500));
+//   }
+// });
+export const updateCartItemProperties = handleAsyncError(async (req, res, next) => {
+  console.log("=== UPDATE USING FINDONEANDUPDATE ===");
+  const { productId, properties } = req.body;
+  const userId = req.user._id;
+  
+  console.log("Request data:", { productId, properties, userId });
+  
+  if (!productId || !properties) {
+    return next(new HandleError("Product ID and properties are required", 400));
+  }
+
+  try {
+    // First, let's check the current state before update
+    const userBeforeUpdate = await User.findById(userId);
+    const cartItemBefore = userBeforeUpdate?.cart.find(
+      item => item.productId.toString() === productId.toString()
+    );
+    console.log("BEFORE UPDATE - Cart item properties:", cartItemBefore?.properties);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { 
+        _id: userId,
+        "cart.productId": productId 
+      },
+      { 
+        $set: { "cart.$.properties": properties } 
+      },
+      { 
+        new: true,
+        runValidators: false 
+      }
+    );
+
+    if (!updatedUser) {
+      console.log("Update failed - user or cart item not found");
+      return next(new HandleError("User or cart item not found", 404));
+    }
+
+    const updatedCartItem = updatedUser.cart.find(
+      item => item.productId.toString() === productId.toString()
+    );
+    
+    console.log("AFTER UPDATE - Updated cart item:", JSON.stringify(updatedCartItem, null, 2));
+    console.log("AFTER UPDATE - Properties specifically:", updatedCartItem?.properties);
+
+    // Double-check by fetching fresh from database
+    const verificationUser = await User.findById(userId);
+    const verificationCartItem = verificationUser?.cart.find(
+      item => item.productId.toString() === productId.toString()
+    );
+    console.log("VERIFICATION FROM DB - Cart item properties:", verificationCartItem?.properties);
+    
+    // Check if update actually occurred
+    const wasUpdated = JSON.stringify(cartItemBefore?.properties) !== JSON.stringify(verificationCartItem?.properties);
+    console.log("WAS ACTUALLY UPDATED IN DB:", wasUpdated);
+    
+    if (!wasUpdated) {
+      console.log("WARNING: Update operation completed but no actual change detected in database!");
+    }
+
+    res.status(200).json({
+      success: true,
+      productId: updatedCartItem.productId,
+      properties: updatedCartItem.properties,
+      message: "Cart item properties updated successfully",
+      debug: {
+        beforeUpdate: cartItemBefore?.properties,
+        afterUpdate: verificationCartItem?.properties,
+        wasUpdated: wasUpdated
+      }
+    });
+    
+  } catch (error) {
+    console.error("Error in findOneAndUpdate:", error);
+    return next(new HandleError("Failed to update cart item properties", 500));
+  }
+});
 
 export const addPhone = handleAsyncError(async (req, res, next) => {
   const userId = req.user._id;

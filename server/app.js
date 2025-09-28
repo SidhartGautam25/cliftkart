@@ -5,6 +5,7 @@ import errorMiddleware from "./middlewares/error.js";
 import userRoute from "./routes/userRoutes.js";
 // import paymentRoute from "./routes/payment.js"
 import productRoutes from "./routes/productRoute.js";
+import orderRoutes from "./routes/orderRoute.js"
 import cors from "cors";
 
 const app = express();
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 
 app.use("/api/v1", userRoute);
 app.use("/api/v1", productRoutes);
+app.use("/api/v1",orderRoutes);
 // app.use("/api/v1", paymentRoute);
 
 app.use(errorMiddleware);

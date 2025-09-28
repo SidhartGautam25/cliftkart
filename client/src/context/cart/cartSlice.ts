@@ -10,6 +10,7 @@ interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  properties?: Record<string, any>;
 }
 
 interface ShippingInfo {
@@ -33,11 +34,18 @@ interface AddItemParams {
   name: string;
   image: string;
   price: number;
+  properties?: Record<string, any>;
+}
+
+interface UpdatePropertiesParams {
+    id: string;
+    properties: Record<string, any>;
 }
 
 interface ProductResponse {
   productId: string;
   quantity: string;
+  properties?:Record<string , any>;
   success: boolean;
 }
 
@@ -53,12 +61,13 @@ export const addItemsToCart = createAsyncThunk<
   { rejectValue: ApiError }
 >(
   "cart/addItemsToCart",
-  async ({ id, quantity, name, image, price }, { rejectWithValue }) => {
+  async ({ id, quantity, name, image, price, properties }, { rejectWithValue }) => {
     try {
       const productId = id;
+      console.log("going to add it to cart")
       const { data }: { data: ProductResponse } = await axiosInstance.post(
         `/api/v1/addToCart`,
-        { productId, quantity }
+        { productId, quantity , properties }
       );
 
       return {
@@ -91,6 +100,30 @@ export const loadCartItems = createAsyncThunk<
       axiosError.response?.data || { message: "Failed to load cart Items" }
     );
   }
+});
+
+
+//  Update item properties in the cart **
+export const updateItemProperties = createAsyncThunk<
+    { id: string; properties: Record<string, any> },
+    UpdatePropertiesParams,
+    { rejectValue: ApiError }
+>("cart/updateItemProperties", async ({ id, properties }, { rejectWithValue }) => {
+    try {
+        const productId = id;
+        console.log("going to send the request for chnaging property to server");
+        // Assuming a new endpoint for updating properties
+        const { data } = await axiosInstance.put(`/api/v1/cart/updateItem`, {
+            productId,
+            properties,
+        });
+        return { id: data.productId, properties: data.properties };
+    } catch (error) {
+        const axiosError = error as AxiosError<ApiError>;
+        return rejectWithValue(
+            axiosError.response?.data || { message: "Failed to update item properties" }
+        );
+    }
 });
 
 export const removeFromCart = createAsyncThunk<
@@ -203,6 +236,25 @@ const cartSlice = createSlice({
         state.error =
           action.payload?.message ||
           "An error Occured while loading cart items";
+      })
+       .addCase(updateItemProperties.pending, (state, action) => {
+          state.updatingId = action.meta.arg.id;
+          state.error = null;
+      })
+      .addCase(updateItemProperties.fulfilled, (state, action) => {
+          const { id, properties } = action.payload;
+          const itemToUpdate = state.cartItems.find((item) => item.id === id);
+          if (itemToUpdate) {
+              itemToUpdate.properties = properties;
+              state.message = `Updated properties for ${itemToUpdate.name}`;
+          }
+          state.updatingId = null;
+          state.success = true;
+          StorageManager.setCartItems(state.cartItems);
+      })
+      .addCase(updateItemProperties.rejected, (state, action) => {
+          state.updatingId = null;
+          state.error = action.payload?.message || "Failed to update properties";
       })
       // .addCase(removeItemsToCart.pending, (state) => {
         

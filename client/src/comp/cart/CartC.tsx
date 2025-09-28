@@ -30,6 +30,10 @@ const CartC: React.FC = () => {
     navigate(`/product/${id}`);
   };
 
+  const handleBuyClick=()=>{
+    navigate("/checkout");
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
     <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-10">
@@ -69,7 +73,7 @@ const CartC: React.FC = () => {
     <span className="font-medium">₹{totalCost.toFixed(2)}</span>
     </p>
     </div>
-    <button className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+    <button onClick={handleBuyClick} className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
     Buy Now
     </button>
     </div>

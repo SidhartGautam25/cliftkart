@@ -238,7 +238,7 @@ export const categories = [
     ssize:false,
     quant2:false,
     quant1:false,
-    image:"catIcon/kidClothes.jpeg",
+    image:"catIcon/cat1.jpeg",
     subcategories: [
       {
         id: "3-1",

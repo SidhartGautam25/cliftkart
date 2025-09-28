@@ -1,7 +1,14 @@
 import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { addItemsToCart, clearCart, loadCartItems } from "../cart/cartSlice";
+import { addItemsToCart, clearCart, loadCartItems , updateItemProperties} from "../cart/cartSlice";
 import { toast } from "react-toastify";
+
+
+interface UpdatePropertiesParams {
+    id: string;
+    properties: Record<string, any>;
+}
+
 
 export const useCart = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +34,21 @@ export const useCart = () => {
     }
   },[isAuthenticated,dispatch]);
 
+
+  const handleUpdateProperties = useCallback(async ({ id, properties }: UpdatePropertiesParams) => {
+    if (isAuthenticated) {
+        try {
+            await dispatch(updateItemProperties({ id, properties })).unwrap();
+            toast.success("Item properties updated successfully!");
+        } catch (err: any) {
+            console.error("Failed to update properties:", err);
+            toast.error(err.message || "Failed to update item properties.");
+        }
+    } else {
+        toast.error("Please login to update item properties.");
+    }
+  }, [isAuthenticated, dispatch]);
+
   const loadCart=useCallback(async()=>{
     if(isAuthenticated){
         return dispatch(loadCartItems())
@@ -37,5 +59,5 @@ export const useCart = () => {
     dispatch(clearCart());
   }, [dispatch]);
 
-  return {cartItems,loading,updatingId,addToCart,updateQuantity,loadCart,clearCartData};
+  return {cartItems,loading,updatingId,addToCart,updateQuantity,loadCart,clearCartData , handleUpdateProperties};
 };

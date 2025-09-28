@@ -38,8 +38,12 @@ const userSchema = new mongoose.Schema(
         type: String,
         default: "1",
         required: true
+      },
+      properties: {
+         type: mongoose.Schema.Types.Mixed,
+         default: {}
       }
-    }],
+         }],
     address: {
       type: [{
         pin: {
@@ -185,6 +189,7 @@ userSchema.statics.getCartWithProductsSimple = async function (userId) {
     const transformedCart = user.cart.map(cartItem => ({
       productId: cartItem.productId,
       quantity: cartItem.quantity,
+      properties: cartItem.properties,
       product: cartItem.productId ? {
         id: cartItem.productId.id,
         _id: cartItem.productId._id,
